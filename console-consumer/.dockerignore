@@ -1,0 +1,14 @@
+# Ignorar arquivos temporários e binários
+bin/
+obj/
+
+# Ignorar pastas de testes
+test/
+
+# Ignorar configurações locais do Visual Studio
+.vs/
+*.user
+*.suo
+
+# Ignorar a pasta de uploads compartilhada
+shared/uploads/

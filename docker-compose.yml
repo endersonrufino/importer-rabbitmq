@@ -11,10 +11,12 @@ services:
       - DOTNET_RUNNING_IN_CONTAINER=true
       - ASPNETCORE_ENVIRONMENT=Production
       - RABBITMQ_HOST=rabbitmq
-      - UploadSettings__BasePath=/shared/Uploads
+      - UploadSettings__BasePath=/app/shared/uploads
     depends_on:
       - db
       - rabbitmq
+    volumes:
+      - uploadshared:/app/shared/uploads
     networks:
       - app_network
     restart: always
@@ -24,11 +26,14 @@ services:
       context: .
       dockerfile: console-consumer/Dockerfile
     environment:
+      - ASPNETCORE_ENVIRONMENT=Production
       - RABBITMQ_HOST=rabbitmq
-      - UploadSettings__BasePath=/shared/Uploads
+      - UploadSettings__BasePath=/app/shared/uploads
     depends_on:
       - db
       - rabbitmq
+    volumes:
+      - uploadshared:/app/shared/uploads
     networks:
       - app_network
     restart: always
@@ -65,7 +70,8 @@ services:
       retries: 5
 
 volumes:
-  dbdata:
+   dbdata: {}
+   uploadshared: {}
 
 networks:
   app_network:
