@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  api-upload:
+    build:
+      context: .
+      dockerfile: api-upload/Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - app_network
+    restart: always
+
+  console-consumer:
+    build:
+      context: .
+      dockerfile: console-consumer/Dockerfile
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - app_network
+    restart: always
+
+  db:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Your_password123
+    ports:
+      - "1433:1433"
+    volumes:
+      - dbdata:/var/opt/mssql
+    networks:
+      - app_network
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"    # Porta para aplicações se conectarem
+      - "15672:15672"  # Porta da interface web de administração
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - app_network
+    restart: always
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  dbdata:
+
+networks:
+  app_network:
+    driver: bridge
