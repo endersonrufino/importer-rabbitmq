@@ -52,3 +52,9 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+/.vs/importer-rabbitmq/FileContentIndex
+/.vs/ImporterRabbitMQ/config
+/.vs/ImporterRabbitMQ/FileContentIndex
+/.vs/ImporterRabbitMQ/v17
+/.vs
+/shared/Uploads
