@@ -1,0 +1,11 @@
+{
+    "profiles": {
+      "console-consumer": {
+        "commandName": "Project",
+        "environmentVariables": {
+          "RABBITMQ_HOST": "localhost"
+        }
+      }
+    }
+  }
+  

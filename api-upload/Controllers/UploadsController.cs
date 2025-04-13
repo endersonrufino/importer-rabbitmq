@@ -7,6 +7,7 @@ using shared.Entities;
 using shared.Enums;
 using System.Runtime.CompilerServices;
 using shared.Models;
+using Microsoft.Extensions.Options;
 
 namespace api_upload.Controllers
 {
@@ -15,11 +16,14 @@ namespace api_upload.Controllers
     public class UploadsController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;
+        private readonly string _uploadPath;
+
         private const string QUEUE_NAME = "fila_importacao";
 
-        public UploadsController(AppDbContext appDbContext)
+        public UploadsController(AppDbContext appDbContext, IOptions<UploadSettings> uploadSettings)
         {
             _appDbContext = appDbContext;
+            _uploadPath = uploadSettings.Value.BasePath;
         }
 
         [HttpPost]
@@ -29,12 +33,10 @@ namespace api_upload.Controllers
             {
                 return BadRequest("Arquivo inválido.");
             }
-
-            var uploadsFolder = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "Shared", "Uploads");
-
-            if (!Directory.Exists(uploadsFolder))
+           
+            if (!Directory.Exists(_uploadPath))
             {
-                Directory.CreateDirectory(uploadsFolder);
+                Directory.CreateDirectory(_uploadPath);
             }
 
             var newFile = new FileUpload
@@ -50,18 +52,18 @@ namespace api_upload.Controllers
 
             var fileName = $"{newFile.Id}_{file.FileName}";
 
-            var filePath = Path.Combine(uploadsFolder, fileName);
+            var filePath = Path.Combine(_uploadPath, fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-           // var factory = new ConnectionFactory() { HostName = "localhost" };
+            var hostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
 
             var factory = new ConnectionFactory()
             {
-                HostName = "rabbitmq", // <-- nome do serviço no docker-compose
+                HostName = hostName,
                 UserName = "guest",
                 Password = "guest"
             };

@@ -22,10 +22,11 @@ namespace console_consumer.Services
         {
             _serviceProvider = serviceProvider;
 
-            // var factory = new ConnectionFactory() { HostName = "localhost" };
+            var hostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
+
             var factory = new ConnectionFactory()
             {
-                HostName = "rabbitmq", // <-- nome do serviço no docker-compose
+                HostName = hostName,
                 UserName = "guest",
                 Password = "guest"
             };

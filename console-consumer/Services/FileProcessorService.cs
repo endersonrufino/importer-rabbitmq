@@ -1,5 +1,6 @@
 ﻿using console_consumer.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using shared.Context;
 using shared.Enums;
 using shared.Models;
@@ -9,19 +10,19 @@ namespace console_consumer.Services
     public class FileProcessorService
     {
         private readonly AppDbContext _dbContext;
+        private readonly string _uploadPath;
 
-        public FileProcessorService(AppDbContext dbContext)
+        public FileProcessorService(AppDbContext dbContext, IOptions<UploadSettings> options)
         {
             _dbContext = dbContext;
+            _uploadPath = options.Value.BasePath;
         }
 
         public async Task ProcessFileAsync(ImportMessage data)
-        {
-            var uploadsFolder = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())!.FullName, "Shared", "Uploads");
-
+        {           
             var fileName = $"{data.FileId}_{data.FileName}";
 
-            var filePath = Path.Combine(uploadsFolder, fileName);
+            var filePath = Path.Combine(_uploadPath, fileName);
 
             if (!File.Exists(filePath))
             {
