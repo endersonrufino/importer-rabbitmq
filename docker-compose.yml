@@ -12,8 +12,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - RABBITMQ_HOST=rabbitmq
       - UploadSettings__BasePath=/app/shared/uploads
+      - ConnectionStrings__DefaultConnection=Host=postgre-db;Port=5432;Database=importer_db;Username=postgres;Password=postgres
     depends_on:
-      - db
+      - postgre-db
       - rabbitmq
     volumes:
       - uploadshared:/app/shared/uploads
@@ -29,8 +30,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - RABBITMQ_HOST=rabbitmq
       - UploadSettings__BasePath=/app/shared/uploads
+      - ConnectionStrings__DefaultConnection=Host=postgre-db;Port=5432;Database=importer_db;Username=postgres;Password=postgres
     depends_on:
-      - db
+      - postgre-db
       - rabbitmq
     volumes:
       - uploadshared:/app/shared/uploads
@@ -38,15 +40,16 @@ services:
       - app_network
     restart: always
 
-  db:
-    image: "mcr.microsoft.com/mssql/server:2019-latest"
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=Your_password123
+  postgre-db:
+    image: postgres:15-alpine  # ou continue com bitnami/postgresql se preferir
     ports:
-      - "1433:1433"
+    - "5432:5432"
+    environment:
+      - POSTGRES_DB=importer_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
-      - dbdata:/var/opt/mssql
+      - dbdata:/var/lib/postgresql/data
     networks:
       - app_network
     restart: always
@@ -55,8 +58,8 @@ services:
     image: rabbitmq:3-management
     hostname: rabbitmq
     ports:
-      - "5672:5672"    # Porta para aplicações se conectarem
-      - "15672:15672"  # Porta da interface web de administração
+      - "5672:5672"
+      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
@@ -70,8 +73,8 @@ services:
       retries: 5
 
 volumes:
-   dbdata: {}
-   uploadshared: {}
+  dbdata: {}
+  uploadshared: {}
 
 networks:
   app_network:

@@ -27,7 +27,7 @@ namespace api_upload.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> Post(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
@@ -44,7 +44,7 @@ namespace api_upload.Controllers
                 Id = Guid.NewGuid(),
                 FileName = file.FileName,
                 Status = StatusEnum.NEW,
-                UploadedDate = DateTime.Now,
+                UploadedDate = DateTime.UtcNow,
             };
 
             await _appDbContext.Files.AddAsync(newFile);

@@ -21,10 +21,9 @@ var host = Host.CreateDefaultBuilder(args)
         var configuration = context.Configuration;
 
         services.Configure<UploadSettings>(configuration.GetSection("UploadSettings"));
+
         services.AddDbContext<AppDbContext>(options =>
-        {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        });
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<FileProcessorService>();
         services.AddHostedService<RabbitConsumerService>();
