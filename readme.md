@@ -11,7 +11,6 @@ Utiliza **Docker**, **RabbitMQ**, **PostgreSQL** e **Entity Framework Core** par
 - Entity Framework Core (Migrations)
 - Console App + API REST (Web API)
 - Docker Compose
-- Dapper (opcional, se usado no projeto)
 
 ---
 
