@@ -3,6 +3,7 @@
       "console-consumer": {
         "commandName": "Project",
         "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development",
           "RABBITMQ_HOST": "localhost"
         }
       }

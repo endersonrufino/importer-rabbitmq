@@ -22,6 +22,9 @@ var host = Host.CreateDefaultBuilder(args)
 
         services.Configure<UploadSettings>(configuration.GetSection("UploadSettings"));
 
+        Console.WriteLine("Ambiente: " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
+        Console.WriteLine("ConnectionString: " + configuration.GetConnectionString("DefaultConnection"));
+
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
